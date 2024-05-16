@@ -21,21 +21,53 @@ app.Run(async (HttpContext context) =>
     //     }
     // }
 
-    StreamReader reader = new StreamReader(context.Request.Body);
-    string body = await reader.ReadToEndAsync();
+    // StreamReader reader = new StreamReader(context.Request.Body);
+    // string body = await reader.ReadToEndAsync();
+    //
+    // Dictionary<string, StringValues> queryDict = QueryHelpers.ParseQuery(body);
+    //
+    // if (queryDict.ContainsKey("firstName"))
+    // {
+    //     foreach (var value in queryDict["firstName"])
+    //     {
+    //         await context.Response.WriteAsync($"firstName= {value}\n");
+    //     }
+    // }
 
-    Dictionary<string, StringValues> queryDict = QueryHelpers.ParseQuery(body);
+    context.Response.Headers["content-type"] = "text/html";
+    string result = "";
 
-    if (queryDict.ContainsKey("firstName"))
+    if (context.Request.Method == "GET")
     {
-        foreach (var value in queryDict["firstName"])
+        Int32.TryParse(GetRequestQuery(context, "firstNumber"), out var firstNumber);
+        Int32.TryParse(GetRequestQuery(context, "secondNumber"), out var secondNumber);
+        var operation = GetRequestQuery(context, "operation");
+
+        switch (operation)
         {
-            await context.Response.WriteAsync($"firstName= {value}\n");
+            case "+": result = (firstNumber + secondNumber).ToString();
+                break;
+            case "-": result = (firstNumber - secondNumber).ToString();
+                break;
+            case "*": result = (firstNumber * secondNumber).ToString();
+                break;
+            case "/": result = (firstNumber / secondNumber).ToString();
+                break;
+            case "%": result = (firstNumber % secondNumber).ToString();
+                break;
         }
     }
-    
-    
 
+    await context.Response.WriteAsync(result);
 });
+
+string GetRequestQuery(HttpContext httpContext, string queryKey)
+{
+    if (httpContext.Request.Query.ContainsKey(queryKey))
+    {
+        return httpContext.Request.Query[queryKey];
+    }
+    return "";
+}
 
 app.Run();
