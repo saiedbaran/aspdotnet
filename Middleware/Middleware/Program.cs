@@ -1,4 +1,7 @@
+using Middleware.SimpleMiddlewares;
+
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddTransient<SimpleMiddleware>();
 var app = builder.Build();
 
 app.Use(async (HttpContext context, RequestDelegate next) =>
@@ -9,18 +12,12 @@ app.Use(async (HttpContext context, RequestDelegate next) =>
     }
 );
 
-app.Use(async (HttpContext context, RequestDelegate next) =>
-    {
-        await context.Response.WriteAsync("Second Hello \n");
-        await next(context);
-        await context.Response.WriteAsync("Second Bye \n");
-    }
-);
+app.UseMiddleware<SimpleMiddleware>();
 
 
 app.Run(async (HttpContext context)=>
 {
-    await context.Response.WriteAsync("Final Hello");
+    await context.Response.WriteAsync("Final Hello\n");
 });
 
 app.Run();
