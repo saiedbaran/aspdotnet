@@ -9,6 +9,14 @@ namespace Middleware.SimpleMiddlewares
             await context.Response.WriteAsync("End of Second Middleware ***\n");
         }
     }
+
+    public static class SimpleMiddlewareExtension
+    {
+        public static IApplicationBuilder UseSimpleMiddleware(this IApplicationBuilder extendedApp)
+        {
+            return extendedApp.UseMiddleware<SimpleMiddleware>();
+        }
+    }
 }
 
 

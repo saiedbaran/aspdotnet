@@ -12,8 +12,9 @@ app.Use(async (HttpContext context, RequestDelegate next) =>
     }
 );
 
-app.UseMiddleware<SimpleMiddleware>();
-
+//app.UseMiddleware<SimpleMiddleware>();
+// app.UseSimpleMiddleware();
+app.UseHelloMiddleware();
 
 app.Run(async (HttpContext context)=>
 {
